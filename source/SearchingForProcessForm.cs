@@ -48,9 +48,9 @@ namespace UmbraInjector
             }
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            //startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/{GetDLLName()} -n UmbraRoR -c Loader -m Load&pause";
+            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/{GetDLLName()} -n UmbraRoR -c Loader -m Load";
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();
