@@ -139,10 +139,10 @@
     <Content Include="Data\smi.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UmbraInjecter.ico" />
     <Content Include="Data\UmbraMenu\UmbraRoR-v1.2.4.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="UmbraInjecter.ico" />
     <EmbeddedResource Include="Data\ICSharpCode.SharpZipLib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -151,5 +151,6 @@
     </EmbeddedResource>
     <None Include="Resources\UmbraInjecter-removebg-preview.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
