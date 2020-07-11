@@ -29,10 +29,10 @@ namespace UmbraInjector
         public static string GetDLLName()
         {
             string dllName = "";
-            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
+            var currentFiles = Directory.GetFiles("UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                string temp = fileName.Replace("Data/UmbraMenu/", "");
+                string temp = fileName.Replace("UmbraMenu/", "");
                 if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
                 {
                     dllName = temp;

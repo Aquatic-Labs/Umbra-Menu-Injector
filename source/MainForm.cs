@@ -56,16 +56,7 @@ namespace UmbraInjector
         {
             if (autoUpdateCheck.Checked && Program.updateAvailable)
             {
-                Program.HandleMultipleFiles();
-                using (WebClient client = new WebClient())
-                {
-                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
-                    {
-                        // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                        Program.UnzipFromStream(data, $"Data/UmbraMenu");
-                    }
-                }
-                Thread.Sleep(1000);
+                Program.DownloadUpdate();
 
                 Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
                 getProcessFirstTry = getProcess.Length != 0;
@@ -104,10 +95,10 @@ namespace UmbraInjector
                         using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
                         {
                             // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                            Program.UnzipFromStream(data, $"Data/UmbraMenu");
+                            Program.UnzipFromStream(data, $"UmbraMenu");
                         }
                     }
-                    File.Delete($"Data/UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
+                    File.Delete($"UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
                     Thread.Sleep(10000);
 
                     Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");

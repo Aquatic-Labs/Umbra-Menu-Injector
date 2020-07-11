@@ -5,6 +5,8 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Threading;
 
 namespace UmbraInjector
 {
@@ -73,10 +75,10 @@ namespace UmbraInjector
         public static List<string> GetAllFiles()
         {
             List<string> files = new List<string>();
-            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
+            var currentFiles = Directory.GetFiles("UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                string temp = fileName.Replace("Data/UmbraMenu/", "");
+                string temp = fileName.Replace("UmbraMenu/", "");
                 if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
                 {
                     files.Add(temp);
@@ -89,12 +91,54 @@ namespace UmbraInjector
         {
             if (GetAllFiles().Count > 1)
             {
-                File.Delete($"Data/UmbraMenu/{GetAllFiles()[1]}");
+                File.Delete($"UmbraMenu/{GetAllFiles()[1]}");
                 Debug.Write(GetAllFiles()[0]);
             }
             else
             {
-                File.Delete($"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
+                File.Delete($"UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
+            }
+        }
+
+        public static void DownloadUpdate()
+        {
+            try
+            {
+                HandleMultipleFiles();
+                using (WebClient client = new WebClient())
+                {
+                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
+                    {
+                        // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                        Program.UnzipFromStream(data, $"UmbraMenu");
+                    }
+                }
+                Thread.Sleep(1000);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                string path = $"UmbraMenu/{SearchingForProcessForm.GetDLLName()}";
+                FileAttributes attributes = File.GetAttributes(path);
+                if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                {
+                    attributes &= ~FileAttributes.ReadOnly;
+                    File.SetAttributes(path, attributes);
+
+                    HandleMultipleFiles();
+                    using (WebClient client = new WebClient())
+                    {
+                        using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
+                        {
+                            // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                            Program.UnzipFromStream(data, $"UmbraMenu");
+                        }
+                    }
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
@@ -105,12 +149,12 @@ namespace UmbraInjector
             var latest = releases[0];
             latestVersion = latest.TagName;
 
-            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
+            var currentFiles = Directory.GetFiles("UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                if (fileName.StartsWith("Data/UmbraMenu/UmbraRoR-v"))
+                if (fileName.StartsWith("UmbraMenu/UmbraRoR-v"))
                 {
-                    string temp = fileName.Replace("Data/UmbraMenu/UmbraRoR-v", "");
+                    string temp = fileName.Replace("UmbraMenu/UmbraRoR-v", "");
                     currentVersion = temp.Replace(".dll", "");
                 }
             }
