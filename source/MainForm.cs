@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Net;
-using System.IO;
 using System.Reflection;
-using System.Threading;
 
 namespace UmbraInjector
 {
@@ -37,23 +34,28 @@ namespace UmbraInjector
         private void MainForm_Load(object sender, EventArgs e)
         {
             Program.CheckForUpdate();
+            Program.FilePresent();
         }
 
         private void UpdateCheck_Tick(object sender, EventArgs e)
         {
-            if (!Program.FilePresent())
+            if (Program.upToDate && Program.filePresent)
+            {
+                InjectButton.Text = $"Inject\nv{Program.currentVersion}";
+            }
+            else if (!Program.filePresent && !Program.rateLimited)
             {
                 InjectButton.Text = $"Download and Inject\nLatest: v{Program.latestVersion}";
+            }
+            else if (!Program.filePresent && Program.rateLimited)
+            {
+                InjectButton.Text = $"Download and Inject\n Fallback: v1.2.4";
             }
             else if (Program.updateAvailable && autoUpdateCheck.Checked)
             {
                 InjectButton.Text = $"Update and Inject\nLatest: v{Program.latestVersion}";
             }
-            else if (Program.upToDate || Program.devBuild)
-            {
-                InjectButton.Text = $"Inject\nv{Program.currentVersion}";
-            }
-            else
+            else if (Program.filePresent)
             {
                 InjectButton.Text = $"Inject\nv{Program.currentVersion}";
             }
@@ -81,7 +83,7 @@ namespace UmbraInjector
             }
             else
             {
-                if (Program.FilePresent())
+                if (Program.filePresent)
                 {
                     Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
                     getProcessFirstTry = getProcess.Length != 0;
@@ -98,16 +100,7 @@ namespace UmbraInjector
                 }
                 else
                 {
-                    using (WebClient client = new WebClient())
-                    {
-                        using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
-                        {
-                            // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                            Program.UnzipFromStream(data, $"UmbraMenu");
-                        }
-                    }
-                    File.Delete($"UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
-                    Thread.Sleep(10000);
+                    Program.DownloadUpdate();
 
                     Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
                     getProcessFirstTry = getProcess.Length != 0;

@@ -3,10 +3,10 @@ using System.IO;
 using Octokit;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace UmbraInjector
 {
@@ -15,9 +15,11 @@ namespace UmbraInjector
 
         public static bool updateAvailable;
         public static string latestVersion;
-        public static string currentVersion;
+        public static string currentVersion = null;
         public static bool devBuild;
         public static bool upToDate = true;
+        public static bool rateLimited = false;
+        public static bool filePresent;
 
         /// <summary>
         /// The main entry point for the application.
@@ -57,9 +59,8 @@ namespace UmbraInjector
             }
         }
 
-        public static bool FilePresent()
+        public static void FilePresent()
         {
-            bool filePresent;
             if (currentVersion != null)
             {
                 filePresent = true;
@@ -68,12 +69,11 @@ namespace UmbraInjector
             {
                 filePresent = false;
             }
-            return filePresent;
         }
 
         public static void DeleteFile()
         {
-            if (FilePresent())
+            if (filePresent)
             {
                 File.Delete($"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
             }
@@ -86,52 +86,41 @@ namespace UmbraInjector
 
         public static void DownloadUpdate()
         {
-            try
+            DeleteFile();
+            if (rateLimited)
             {
-                DeleteFile();
+                MessageBox.Show("You have been rate limited by Github's API and cannot automatically download the latest version. Downloading v1.2.4 instead.");
                 using (WebClient client = new WebClient())
                 {
-                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
+                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/download/1.2.4/UmbraMenu-v1.2.4.zip"))
                     {
                         // This stream cannot be opened with the ZipFile class because CanSeek is false.
                         Program.UnzipFromStream(data, $"Data/UmbraMenu");
                     }
                 }
+                upToDate = true;
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                using (WebClient client = new WebClient())
+                {
+                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{latestVersion}.zip"))
+                    {
+                        // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                        Program.UnzipFromStream(data, $"Data/UmbraMenu");
+                    }
+                }
+                upToDate = true;
                 Thread.Sleep(1000);
             }
-            catch (UnauthorizedAccessException)
-            {
-                string path = $"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}";
-                FileAttributes attributes = File.GetAttributes(path);
-                if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                {
-                    attributes &= ~FileAttributes.ReadOnly;
-                    File.SetAttributes(path, attributes);
-
-                    DeleteFile();
-                    using (WebClient client = new WebClient())
-                    {
-                        using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
-                        {
-                            // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                            Program.UnzipFromStream(data, $"Data/UmbraMenu");
-                        }
-                    }
-                    Thread.Sleep(1000);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            CheckForUpdate();
         }
 
         public static async void CheckForUpdate()
         {
-            var client = new GitHubClient(new ProductHeaderValue("UmbraUpdateCheck"));
-            var releases = await client.Repository.Release.GetAll("Acher0ns", "Umbra-Mod-Menu").ConfigureAwait(false);
-            var latest = releases[0];
-            latestVersion = latest.TagName;
+
+            var client = new GitHubClient(new ProductHeaderValue("UmbraInjectorUpdateCheck"));
 
             var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
             foreach (string fileName in currentFiles)
@@ -139,59 +128,71 @@ namespace UmbraInjector
                 if (fileName.StartsWith("Data/UmbraMenu/UmbraRoR-v"))
                 {
                     string temp = fileName.Replace("Data/UmbraMenu/UmbraRoR-v", "");
-                    currentVersion = temp.Replace(".dll", "");
+                    currentVersion = temp?.Replace(".dll", "");
                 }
             }
 
-            if (currentVersion != null)
+            try
             {
-                string[] versionSplit = currentVersion.Split('.');
-                string[] latestVersionSplit = latestVersion.Split('.');
+                var releases = await client.Repository.Release.GetAll("Acher0ns", "Umbra-Mod-Menu").ConfigureAwait(false);
+                var latest = releases[0];
+                latestVersion = latest.TagName;
 
-                for (int i = 0; i < versionSplit.Length; i++)
+                if (currentVersion != null)
                 {
-                    int versionNumber = int.Parse(versionSplit[i]);
-                    int latestVersionNumber = int.Parse(latestVersionSplit[i]);
-                    if (versionNumber < latestVersionNumber)
+                    string[] versionSplit = currentVersion.Split('.');
+                    string[] latestVersionSplit = latestVersion.Split('.');
+
+                    for (int i = 0; i < versionSplit.Length; i++)
                     {
-                        upToDate = false;
-                        devBuild = false;
-                        updateAvailable = true;
-                        break;
+                        int versionNumber = int.Parse(versionSplit[i]);
+                        int latestVersionNumber = int.Parse(latestVersionSplit[i]);
+                        if (versionNumber < latestVersionNumber)
+                        {
+                            upToDate = false;
+                            devBuild = false;
+                            updateAvailable = true;
+                            break;
+                        }
+                        else if (versionNumber > latestVersionNumber)
+                        {
+                            upToDate = false;
+                            devBuild = true;
+                            updateAvailable = false;
+                            break;
+                        }
                     }
-                    else if (versionNumber > latestVersionNumber)
+                }
+                else
+                {
+                    string[] versionSplit = "0.0.0".Split('.');
+                    string[] latestVersionSplit = latestVersion.Split('.');
+
+                    for (int i = 0; i < versionSplit.Length; i++)
                     {
-                        upToDate = false;
-                        devBuild = true;
-                        updateAvailable = false;
-                        break;
+                        int versionNumber = int.Parse(versionSplit[i]);
+                        int latestVersionNumber = int.Parse(latestVersionSplit[i]);
+                        if (versionNumber < latestVersionNumber)
+                        {
+                            upToDate = false;
+                            devBuild = false;
+                            updateAvailable = true;
+                            break;
+                        }
+                        else if (versionNumber > latestVersionNumber)
+                        {
+                            upToDate = false;
+                            devBuild = true;
+                            updateAvailable = false;
+                            break;
+                        }
                     }
                 }
             }
-            else
+            catch (RateLimitExceededException)
             {
-                string[] versionSplit = "0.0.0".Split('.');
-                string[] latestVersionSplit = latestVersion.Split('.');
-
-                for (int i = 0; i < versionSplit.Length; i++)
-                {
-                    int versionNumber = int.Parse(versionSplit[i]);
-                    int latestVersionNumber = int.Parse(latestVersionSplit[i]);
-                    if (versionNumber < latestVersionNumber)
-                    {
-                        upToDate = false;
-                        devBuild = false;
-                        updateAvailable = true;
-                        break;
-                    }
-                    else if (versionNumber > latestVersionNumber)
-                    {
-                        upToDate = false;
-                        devBuild = true;
-                        updateAvailable = false;
-                        break;
-                    }
-                }
+                rateLimited = true;
+                upToDate = true;
             }
         }
     }
