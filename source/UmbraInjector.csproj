@@ -51,6 +51,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>UmbraInjecter.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Data\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -136,6 +139,7 @@
     <Content Include="Data\smi.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="UmbraInjecter.ico" />
     <Content Include="UmbraMenu\UmbraRoR-v1.2.4.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -72,39 +72,24 @@ namespace UmbraInjector
             return filePresent;
         }
 
-        public static List<string> GetAllFiles()
+        public static void DeleteFile()
         {
-            List<string> files = new List<string>();
-            var currentFiles = Directory.GetFiles("UmbraMenu/");
-            foreach (string fileName in currentFiles)
-            {
-                string temp = fileName.Replace("UmbraMenu/", "");
-                if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
-                {
-                    files.Add(temp);
-                }
-            }
-            return files;
-        }
-
-        public static void HandleMultipleFiles()
-        {
-            if (GetAllFiles().Count > 1)
-            {
-                File.Delete($"UmbraMenu/{GetAllFiles()[1]}");
-                Debug.Write(GetAllFiles()[0]);
-            }
-            else
+            if (FilePresent())
             {
                 File.Delete($"UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
             }
+            else
+            {
+                return;
+            }
+            
         }
 
         public static void DownloadUpdate()
         {
             try
             {
-                HandleMultipleFiles();
+                DeleteFile();
                 using (WebClient client = new WebClient())
                 {
                     using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
@@ -124,7 +109,7 @@ namespace UmbraInjector
                     attributes &= ~FileAttributes.ReadOnly;
                     File.SetAttributes(path, attributes);
 
-                    HandleMultipleFiles();
+                    DeleteFile();
                     using (WebClient client = new WebClient())
                     {
                         using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
