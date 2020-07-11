@@ -41,7 +41,11 @@ namespace UmbraInjector
 
         private void UpdateCheck_Tick(object sender, EventArgs e)
         {
-            if (Program.updateAvailable && autoUpdateCheck.Checked)
+            if (!Program.FilePresent())
+            {
+                InjectButton.Text = $"Download and Inject\nLatest: v{Program.latestVersion}";
+            }
+            else if (Program.updateAvailable && autoUpdateCheck.Checked)
             {
                 InjectButton.Text = $"Update and Inject\nLatest: v{Program.latestVersion}";
             }
