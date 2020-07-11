@@ -1,4 +1,4 @@
-# Umbra Menu Injector
+# Umbra Menu Injector ![url](https://img.shields.io/github/downloads/Acher0ns/Umbra-Menu-Injector/total)
 Auto Injector for the Umbra Mod Menu.
 
 Based on SharpMonoInjector.
