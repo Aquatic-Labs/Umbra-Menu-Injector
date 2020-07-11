@@ -59,7 +59,6 @@ namespace UmbraInjector
 
         public static bool FilePresent()
         {
-            CheckForUpdate();
             bool filePresent;
             if (currentVersion != null)
             {
