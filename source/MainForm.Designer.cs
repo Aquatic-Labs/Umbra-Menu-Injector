@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace UmbraInjector
+﻿namespace UmbraInjector
 {
     partial class MainForm
     {
@@ -33,47 +30,95 @@ namespace UmbraInjector
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.isProcessRunning = new System.Windows.Forms.Timer(this.components);
+            this.Title = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.UpdateButton = new System.Windows.Forms.Button();
+            this.UpdateCheck = new System.Windows.Forms.Timer(this.components);
+            this.InjectButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // Title
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(4, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(322, 34);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Searching for Risk of Rain 2...";
+            this.Title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+            this.Title.ForeColor = System.Drawing.Color.Aqua;
+            this.Title.Location = new System.Drawing.Point(67, 0);
+            this.Title.Name = "Title";
+            this.Title.Size = new System.Drawing.Size(177, 57);
+            this.Title.TabIndex = 0;
+            this.Title.Text = "Umbra Injector";
+            this.Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // isProcessRunning
+            // pictureBox1
             // 
-            this.isProcessRunning.Enabled = true;
-            this.isProcessRunning.Tick += new System.EventHandler(this.IsProcessRunning_Tick);
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox1.Image = global::UmbraInjector.Properties.Resources.UmbraInjecter_removebg_preview;
+            this.pictureBox1.Location = new System.Drawing.Point(-4, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(74, 57);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // UpdateButton
+            // 
+            this.UpdateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.UpdateButton.ForeColor = System.Drawing.Color.Aqua;
+            this.UpdateButton.Location = new System.Drawing.Point(12, 72);
+            this.UpdateButton.Name = "UpdateButton";
+            this.UpdateButton.Size = new System.Drawing.Size(220, 64);
+            this.UpdateButton.TabIndex = 3;
+            this.UpdateButton.Text = "Update";
+            this.UpdateButton.UseVisualStyleBackColor = false;
+            this.UpdateButton.Click += new System.EventHandler(this.BtnDownload_Click);
+            // 
+            // UpdateCheck
+            // 
+            this.UpdateCheck.Enabled = true;
+            this.UpdateCheck.Tick += new System.EventHandler(this.UpdateCheck_Tick);
+            // 
+            // InjectButton
+            // 
+            this.InjectButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.InjectButton.ForeColor = System.Drawing.Color.Aqua;
+            this.InjectButton.Location = new System.Drawing.Point(12, 142);
+            this.InjectButton.Name = "InjectButton";
+            this.InjectButton.Size = new System.Drawing.Size(220, 64);
+            this.InjectButton.TabIndex = 4;
+            this.InjectButton.Text = "Inject";
+            this.InjectButton.UseVisualStyleBackColor = false;
+            this.InjectButton.Click += new System.EventHandler(this.InjectButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(328, 40);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.ClientSize = new System.Drawing.Size(244, 218);
+            this.Controls.Add(this.InjectButton);
+            this.Controls.Add(this.UpdateButton);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.Title);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MainForm";
-            this.TopMost = true;
+            this.Text = "Umbra Injector";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Timer isProcessRunning;
+        private System.Windows.Forms.Label Title;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button UpdateButton;
+        private System.Windows.Forms.Timer UpdateCheck;
+        private System.Windows.Forms.Button InjectButton;
     }
 }
-

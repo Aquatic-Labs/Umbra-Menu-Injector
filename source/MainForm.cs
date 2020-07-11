@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Net;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace UmbraInjector
@@ -16,35 +12,75 @@ namespace UmbraInjector
     {
         public MainForm()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string resourceName = new AssemblyName(args.Name).Name + ".dll";
+                string resource = Array.Find(this.GetType().Assembly.GetManifestResourceNames(), element => element.EndsWith(resourceName));
+
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource))
+                {
+                    Byte[] assemblyData = new Byte[stream.Length];
+                    stream.Read(assemblyData, 0, assemblyData.Length);
+                    return Assembly.Load(assemblyData);
+                }
+            };
+
             InitializeComponent();
-            isProcessRunning.Start();
         }
 
-        private void IsProcessRunning_Tick(object sender, EventArgs e)
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/Acher0ns/Umbra-Mod-Menu");
+            Process.Start(sInfo);
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+            using (WebClient client = new WebClient())
+            {
+                using (var data = new WebClient().OpenRead("https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v1.2.3.zip"))
+                {
+                    // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                    Program.UnzipFromStream(data, $"Data/UmbraMenu");
+                }
+            }
+            File.Delete($"Data/UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
+            Thread.Sleep(10000);
+            Program.CheckForUpdate();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            Program.CheckForUpdate();
+        }
+
+        private void UpdateCheck_Tick(object sender, EventArgs e)
+        {
+            if (Program.updateAvailable)
+            {
+                UpdateButton.Enabled = true;
+            }
+            else if (Program.upToDate || Program.devBuild)
+            {
+                UpdateButton.Enabled = false;
+            }
+        }
+
+        public static bool getProcessFirstTry;
+        private void InjectButton_Click(object sender, EventArgs e)
         {
             Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
-            if (getProcess.Length != 0)
-            {
-                isProcessRunning.Stop();
-                Inject(false);
-                Application.Exit();
-            }
-        }
+            getProcessFirstTry = getProcess.Length != 0;
 
-        public static void Inject(bool alreadyOpen)
-        {
-            if (!alreadyOpen)
+            if (!getProcessFirstTry)
             {
-                Thread.Sleep(15000);
+                Form SearchingForProcessForm = new SearchingForProcessForm();
+                SearchingForProcessForm.Show();
             }
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraRoR-v1.2.4.dll -n UmbraRoR -c Loader -m Load";
-            process.StartInfo = startInfo;
-            process.Start();
-            process.WaitForExit();
+            else
+            {
+                SearchingForProcessForm.Inject(true);
+            }
         }
     }
 }
