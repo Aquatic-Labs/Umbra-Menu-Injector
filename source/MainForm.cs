@@ -41,11 +41,15 @@ namespace UmbraInjector
 
         private void UpdateCheck_Tick(object sender, EventArgs e)
         {
-            if (Program.updateAvailable)
+            if (Program.updateAvailable && autoUpdateCheck.Checked)
             {
                 InjectButton.Text = $"Update and Inject\nLatest: v{Program.latestVersion}";
             }
             else if (Program.upToDate || Program.devBuild)
+            {
+                InjectButton.Text = $"Inject\nv{Program.currentVersion}";
+            }
+            else
             {
                 InjectButton.Text = $"Inject\nv{Program.currentVersion}";
             }
