@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace UmbraInjector
 {
@@ -29,10 +28,10 @@ namespace UmbraInjector
         public static string GetDLLName()
         {
             string dllName = "";
-            var currentFiles = Directory.GetFiles("UmbraMenu/");
+            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                string temp = fileName.Replace("UmbraMenu/", "");
+                string temp = fileName.Replace("Data/UmbraMenu/", "");
                 if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
                 {
                     dllName = temp;
@@ -49,9 +48,9 @@ namespace UmbraInjector
             }
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            //startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/{GetDLLName()} -n UmbraRoR -c Loader -m Load";
+            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/{GetDLLName()} -n UmbraRoR -c Loader -m Load&pause";
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();

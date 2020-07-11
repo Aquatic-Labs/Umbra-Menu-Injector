@@ -76,7 +76,7 @@ namespace UmbraInjector
         {
             if (FilePresent())
             {
-                File.Delete($"UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
+                File.Delete($"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
             }
             else
             {
@@ -95,14 +95,14 @@ namespace UmbraInjector
                     using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
                     {
                         // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                        Program.UnzipFromStream(data, $"UmbraMenu");
+                        Program.UnzipFromStream(data, $"Data/UmbraMenu");
                     }
                 }
                 Thread.Sleep(1000);
             }
             catch (UnauthorizedAccessException)
             {
-                string path = $"UmbraMenu/{SearchingForProcessForm.GetDLLName()}";
+                string path = $"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}";
                 FileAttributes attributes = File.GetAttributes(path);
                 if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
@@ -115,7 +115,7 @@ namespace UmbraInjector
                         using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
                         {
                             // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                            Program.UnzipFromStream(data, $"UmbraMenu");
+                            Program.UnzipFromStream(data, $"Data/UmbraMenu");
                         }
                     }
                     Thread.Sleep(1000);
@@ -134,12 +134,12 @@ namespace UmbraInjector
             var latest = releases[0];
             latestVersion = latest.TagName;
 
-            var currentFiles = Directory.GetFiles("UmbraMenu/");
+            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                if (fileName.StartsWith("UmbraMenu/UmbraRoR-v"))
+                if (fileName.StartsWith("Data/UmbraMenu/UmbraRoR-v"))
                 {
-                    string temp = fileName.Replace("UmbraMenu/UmbraRoR-v", "");
+                    string temp = fileName.Replace("Data/UmbraMenu/UmbraRoR-v", "");
                     currentVersion = temp.Replace(".dll", "");
                 }
             }

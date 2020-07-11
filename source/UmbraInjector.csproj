@@ -140,7 +140,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="UmbraInjecter.ico" />
-    <Content Include="UmbraMenu\UmbraRoR-v1.2.4.dll">
+    <Content Include="Data\UmbraMenu\UmbraRoR-v1.2.4.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Data\ICSharpCode.SharpZipLib.dll">
