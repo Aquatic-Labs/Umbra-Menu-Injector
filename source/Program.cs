@@ -3,6 +3,8 @@ using System.IO;
 using Octokit;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UmbraInjector
 {
@@ -50,6 +52,49 @@ namespace UmbraInjector
                         StreamUtils.Copy(zipInputStream, streamWriter, buffer);
                     }
                 }
+            }
+        }
+
+        public static bool FilePresent()
+        {
+            CheckForUpdate();
+            bool filePresent;
+            if (currentVersion != null)
+            {
+                filePresent = true;
+            }
+            else
+            {
+                filePresent = false;
+            }
+            return filePresent;
+        }
+
+        public static List<string> GetAllFiles()
+        {
+            List<string> files = new List<string>();
+            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
+            foreach (string fileName in currentFiles)
+            {
+                string temp = fileName.Replace("Data/UmbraMenu/", "");
+                if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
+                {
+                    files.Add(temp);
+                }
+            }
+            return files;
+        }
+
+        public static void HandleMultipleFiles()
+        {
+            if (GetAllFiles().Count > 1)
+            {
+                File.Delete($"Data/UmbraMenu/{GetAllFiles()[1]}");
+                Debug.Write(GetAllFiles()[0]);
+            }
+            else
+            {
+                File.Delete($"Data/UmbraMenu/{SearchingForProcessForm.GetDLLName()}");
             }
         }
 

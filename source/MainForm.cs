@@ -34,21 +34,6 @@ namespace UmbraInjector
             Process.Start(sInfo);
         }
 
-        private void BtnDownload_Click(object sender, EventArgs e)
-        {
-            using (WebClient client = new WebClient())
-            {
-                using (var data = new WebClient().OpenRead("https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v1.2.3.zip"))
-                {
-                    // This stream cannot be opened with the ZipFile class because CanSeek is false.
-                    Program.UnzipFromStream(data, $"Data/UmbraMenu");
-                }
-            }
-            File.Delete($"Data/UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
-            Thread.Sleep(10000);
-            Program.CheckForUpdate();
-        }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
             Program.CheckForUpdate();
@@ -58,28 +43,86 @@ namespace UmbraInjector
         {
             if (Program.updateAvailable)
             {
-                UpdateButton.Enabled = true;
+                InjectButton.Text = $"Update and Inject\nLatest: v{Program.latestVersion}";
             }
             else if (Program.upToDate || Program.devBuild)
             {
-                UpdateButton.Enabled = false;
+                InjectButton.Text = $"Inject\nv{Program.currentVersion}";
             }
         }
 
         public static bool getProcessFirstTry;
         private void InjectButton_Click(object sender, EventArgs e)
         {
-            Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
-            getProcessFirstTry = getProcess.Length != 0;
-
-            if (!getProcessFirstTry)
+            if (autoUpdateCheck.Checked && Program.updateAvailable)
             {
-                Form SearchingForProcessForm = new SearchingForProcessForm();
-                SearchingForProcessForm.Show();
+                Program.HandleMultipleFiles();
+                using (WebClient client = new WebClient())
+                {
+                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
+                    {
+                        // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                        Program.UnzipFromStream(data, $"Data/UmbraMenu");
+                    }
+                }
+                Thread.Sleep(1000);
+
+                Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
+                getProcessFirstTry = getProcess.Length != 0;
+
+                if (!getProcessFirstTry)
+                {
+                    Form SearchingForProcessForm = new SearchingForProcessForm();
+                    SearchingForProcessForm.Show();
+                }
+                else
+                {
+                    SearchingForProcessForm.Inject(true);
+                }
             }
             else
             {
-                SearchingForProcessForm.Inject(true);
+                if (Program.FilePresent())
+                {
+                    Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
+                    getProcessFirstTry = getProcess.Length != 0;
+
+                    if (!getProcessFirstTry)
+                    {
+                        Form SearchingForProcessForm = new SearchingForProcessForm();
+                        SearchingForProcessForm.Show();
+                    }
+                    else
+                    {
+                        SearchingForProcessForm.Inject(true);
+                    }
+                }
+                else
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{Program.latestVersion}.zip"))
+                        {
+                            // This stream cannot be opened with the ZipFile class because CanSeek is false.
+                            Program.UnzipFromStream(data, $"Data/UmbraMenu");
+                        }
+                    }
+                    File.Delete($"Data/UmbraMenu/UmbraRoR-v{Program.currentVersion}.dll");
+                    Thread.Sleep(10000);
+
+                    Process[] getProcess = Process.GetProcessesByName("Risk of Rain 2");
+                    getProcessFirstTry = getProcess.Length != 0;
+
+                    if (!getProcessFirstTry)
+                    {
+                        Form SearchingForProcessForm = new SearchingForProcessForm();
+                        SearchingForProcessForm.Show();
+                    }
+                    else
+                    {
+                        SearchingForProcessForm.Inject(true);
+                    }
+                }
             }
         }
     }

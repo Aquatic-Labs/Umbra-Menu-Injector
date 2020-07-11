@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace UmbraInjector
 {
@@ -24,6 +26,21 @@ namespace UmbraInjector
             }
         }
 
+        public static string GetDLLName()
+        {
+            string dllName = "";
+            var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
+            foreach (string fileName in currentFiles)
+            {
+                string temp = fileName.Replace("Data/UmbraMenu/", "");
+                if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
+                {
+                    dllName = temp;
+                }
+            }
+            return dllName;
+        }
+
         public static void Inject(bool alreadyOpen)
         {
             if (!alreadyOpen)
@@ -34,10 +51,12 @@ namespace UmbraInjector
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/UmbraRoR-v1.2.4.dll -n UmbraRoR -c Loader -m Load";
+            startInfo.Arguments = $"/C cd Data&smi.exe inject -p \"Risk of Rain 2\" -a UmbraMenu/{GetDLLName()} -n UmbraRoR -c Loader -m Load";
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();
+            Thread.Sleep(1000);
+            Environment.Exit(0);
         }
     }
 }
