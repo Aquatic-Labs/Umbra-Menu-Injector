@@ -125,9 +125,9 @@ namespace UmbraInjector
             var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
-                if (fileName.StartsWith("Data/UmbraMenu/UmbraRoR-v"))
+                if (fileName.StartsWith("Data/UmbraMenu/UmbraMenu-v"))
                 {
-                    string temp = fileName.Replace("Data/UmbraMenu/UmbraRoR-v", "");
+                    string temp = fileName.Replace("Data/UmbraMenu/UmbraMenu-v", "");
                     currentVersion = temp?.Replace(".dll", "");
                 }
             }
