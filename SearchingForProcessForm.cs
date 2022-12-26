@@ -31,11 +31,18 @@ namespace UmbraInjector
             var currentFiles = Directory.GetFiles("Data/UmbraMenu/");
             foreach (string fileName in currentFiles)
             {
+                if (dllName.Contains(Program.currentVersion))
+                {
+                    break;
+                }
+                
                 string temp = fileName.Replace("Data/UmbraMenu/", "");
                 if (temp.EndsWith(".dll") && temp.Contains("Umbra"))
                 {
                     dllName = temp;
                 }
+                
+ 
             }
             return dllName;
         }
