@@ -27,7 +27,7 @@ namespace UmbraInjector
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/Acher0ns/Umbra-Mod-Menu");
+            ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/Aquatic-Labs/Umbra-Mod-Menu");
             Process.Start(sInfo);
         }
 
@@ -49,7 +49,7 @@ namespace UmbraInjector
             }
             else if (!Program.filePresent && Program.rateLimited)
             {
-                InjectButton.Text = $"Download and Inject\n Fallback: v1.2.4";
+                InjectButton.Text = $"Download and Inject\n Fallback: v2.0.5";
             }
             else if (Program.updateAvailable && autoUpdateCheck.Checked)
             {

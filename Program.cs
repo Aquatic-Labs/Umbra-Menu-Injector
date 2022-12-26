@@ -89,10 +89,10 @@ namespace UmbraInjector
             DeleteFile();
             if (rateLimited)
             {
-                MessageBox.Show("You have been rate limited by Github's API and cannot automatically download the latest version. Downloading v1.2.4 instead.");
+                MessageBox.Show("You have been rate limited by Github's API and cannot automatically download the latest version. Downloading v2.0.5 instead.");
                 using (WebClient client = new WebClient())
                 {
-                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/download/1.2.4/UmbraMenu-v1.2.4.zip"))
+                    using (var data = new WebClient().OpenRead($"https://github.com/Aquatic-Labs/Umbra-Mod-Menu/releases/download/2.0.5/UmbraMenu-v2.0.5.zip"))
                     {
                         // This stream cannot be opened with the ZipFile class because CanSeek is false.
                         Program.UnzipFromStream(data, $"Data/UmbraMenu");
@@ -105,7 +105,7 @@ namespace UmbraInjector
             {
                 using (WebClient client = new WebClient())
                 {
-                    using (var data = new WebClient().OpenRead($"https://github.com/Acher0ns/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{latestVersion}.zip"))
+                    using (var data = new WebClient().OpenRead($"https://github.com/Aquatic-Labs/Umbra-Mod-Menu/releases/latest/download/UmbraMenu-v{latestVersion}.zip"))
                     {
                         // This stream cannot be opened with the ZipFile class because CanSeek is false.
                         Program.UnzipFromStream(data, $"Data/UmbraMenu");
@@ -134,7 +134,7 @@ namespace UmbraInjector
 
             try
             {
-                var releases = await client.Repository.Release.GetAll("Acher0ns", "Umbra-Mod-Menu").ConfigureAwait(false);
+                var releases = await client.Repository.Release.GetAll("Aquatic-Labs", "Umbra-Mod-Menu").ConfigureAwait(false);
                 var latest = releases[0];
                 latestVersion = latest.TagName;
 
